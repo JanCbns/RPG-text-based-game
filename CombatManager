@@ -1,0 +1,35 @@
+import java.util.Scanner;
+
+public class CombatManager {
+    Scanner sc = new Scanner(System.in);
+
+    public boolean fight(Player p, Enemy e) {
+        System.out.println("\n--- BATTLE START: " + e.getName() + " ---");
+        
+        while (p.getHp() > 0 && e.getHp() > 0) {
+            // Speed-based Turn Order
+            if (p.getSpeed() >= e.getSpeed()) {
+                playerAction(p, e);
+                if (e.getHp() > 0) e.takeTurn(p);
+            } else {
+                e.takeTurn(p);
+                if (p.getHp() > 0) playerAction(p, e);
+            }
+        }
+
+        if (p.getHp() > 0) {
+            System.out.println("\nVictory! Gained " + e.getLootValue() + " gold.");
+            p.gold += e.getLootValue();
+            p.clearTempMana(); // Flush temp mana after combat
+            return true;
+        }
+        return false;
+    }
+
+    private void playerAction(Player p, Enemy e) {
+        System.out.println("\n" + p.getName() + " (HP: " + p.getHp() + " | Mana: " + (p.mana + p.tempMana) + ")");
+        System.out.println("1. Attack | 2. Skill");
+        if (sc.nextInt() == 2) p.useSkill(e);
+        else e.receiveDamage(p.getAttack());
+    }
+}

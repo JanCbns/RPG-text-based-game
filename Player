@@ -1,0 +1,28 @@
+import java.util.ArrayList;
+
+public class Player extends Entity {
+    int mana = 50, tempMana = 0, gold = 50;
+    ArrayList<Item> inventory = new ArrayList<>();
+
+    public Player(String name) {
+        super(name, 100, 100, 20, 12); // Starting stats
+    }
+
+    public void useSkill(Entity target) {
+        int totalMana = mana + tempMana;
+        if (totalMana >= 20) {
+            System.out.println(getName() + " casts ARCANE BLAST!");
+            target.receiveDamage(40);
+            // Consume TempMana first, then regular Mana
+            if (tempMana >= 20) tempMana -= 20; 
+            else { mana -= (20 - tempMana); tempMana = 0; }
+        } else {
+            System.out.println("Not enough Mana!");
+        }
+    }
+
+    public void clearTempMana() { this.tempMana = 0; }
+    
+    @Override
+    public void takeTurn(Entity target) { /* Logic handled in CombatManager */ }
+}
