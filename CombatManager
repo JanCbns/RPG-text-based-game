@@ -1,35 +1,51 @@
 import java.util.Scanner;
 
 public class CombatManager {
-    Scanner sc = new Scanner(System.in);
+    private Scanner scanner = new Scanner(System.in);
 
-    public boolean fight(Player p, Enemy e) {
-        System.out.println("\n--- BATTLE START: " + e.getName() + " ---");
-        
-        while (p.getHp() > 0 && e.getHp() > 0) {
-            // Speed-based Turn Order
-            if (p.getSpeed() >= e.getSpeed()) {
-                playerAction(p, e);
-                if (e.getHp() > 0) e.takeTurn(p);
+    public void startCombat(Player player, Enemy enemy) {
+        System.out.println("\n--- BATTLE START: " + player.getName() + " vs " + enemy.getName() + " ---");
+
+        while (enemy.getHp() > 0 && player.getHp() > 0) {
+            // Compare Player.speed vs Enemy.speed for turn order
+            if (player.getSpeed() >= enemy.getSpeed()) {
+                playerTurn(player, enemy);
+                if (enemy.getHp() > 0) enemy.takeTurn(player);
             } else {
-                e.takeTurn(p);
-                if (p.getHp() > 0) playerAction(p, e);
+                enemy.takeTurn(player);
+                if (player.getHp() > 0) playerTurn(player, enemy);
             }
         }
 
-        if (p.getHp() > 0) {
-            System.out.println("\nVictory! Gained " + e.getLootValue() + " gold.");
-            p.gold += e.getLootValue();
-            p.clearTempMana(); // Flush temp mana after combat
-            return true;
+        if (player.getHp() > 0) {
+            System.out.println("\nVICTORY! Gained " + enemy.getLootValue() + " gold.");
+            player.addGold(enemy.getLootValue());
+            player.clearTempMana(); // Flushed after combat
         }
-        return false;
     }
 
-    private void playerAction(Player p, Enemy e) {
-        System.out.println("\n" + p.getName() + " (HP: " + p.getHp() + " | Mana: " + (p.mana + p.tempMana) + ")");
-        System.out.println("1. Attack | 2. Skill");
-        if (sc.nextInt() == 2) p.useSkill(e);
-        else e.receiveDamage(p.getAttack());
+    private void playerTurn(Player player, Enemy enemy) {
+        System.out.println("\n" + player.getName() + " HP: " + player.getHp() + " | Mana: " + (player.getMana() + player.getTempMana()));
+        System.out.println("1. Attack | 2. Skill (15 Mana) | 3. Use Item");
+        
+        String choice = scanner.nextLine();
+        switch (choice) {
+            case "2":
+                if (player.useMana(15)) {
+                    System.out.println("Used Skill! Double Damage!");
+                    enemy.receiveDamage(player.getAttack() * 2);
+                } else {
+                    System.out.println("Lacking mana! Basic attack used.");
+                    enemy.receiveDamage(player.getAttack());
+                }
+                break;
+            case "3":
+                player.useItem();
+                break;
+            default:
+                System.out.println("You attack!");
+                enemy.receiveDamage(player.getAttack());
+                break;
+        }
     }
 }
