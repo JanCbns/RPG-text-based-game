@@ -1,28 +1,48 @@
 import java.util.ArrayList;
 
 public class Player extends Entity {
-    int mana = 50, tempMana = 0, gold = 50;
-    ArrayList<Item> inventory = new ArrayList<>();
+    private int mana, tempMana, gold;
+    private ArrayList<Item> inventory = new ArrayList<>();
 
-    public Player(String name) {
-        super(name, 100, 100, 20, 12); // Starting stats
+    public Player(String name, int hp, int attack, int speed) {
+        super(name, hp, hp, attack, speed);
+        this.mana = 50;
+        this.gold = 50;
     }
 
-    public void useSkill(Entity target) {
-        int totalMana = mana + tempMana;
-        if (totalMana >= 20) {
-            System.out.println(getName() + " casts ARCANE BLAST!");
-            target.receiveDamage(40);
-            // Consume TempMana first, then regular Mana
-            if (tempMana >= 20) tempMana -= 20; 
-            else { mana -= (20 - tempMana); tempMana = 0; }
+    public int getMana() { return mana; }
+    public int getTempMana() { return tempMana; }
+    public int getGold() { return gold; }
+    public void addGold(int amount) { this.gold += amount; }
+    public void setTempMana(int amount) { this.tempMana = amount; }
+    public void clearTempMana() { this.tempMana = 0; }
+    public void addItem(Item item) { inventory.add(item); }
+
+    public boolean useMana(int cost) {
+        if ((mana + tempMana) >= cost) {
+            if (tempMana >= cost) tempMana -= cost;
+            else {
+                int remainder = cost - tempMana;
+                tempMana = 0;
+                mana -= remainder;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public void useItem() {
+        if (inventory.isEmpty()) {
+            System.out.println("Inventory is empty!");
+            return;
+        }
+        Item item = inventory.remove(0);
+        if (item.name.equals("Heal Potion")) {
+            setHp(getHp() + 40);
+            System.out.println("Used Heal Potion (+40 HP)!");
         } else {
-            System.out.println("Not enough Mana!");
+            this.mana += 30;
+            System.out.println("Used Mana Potion (+30 Mana)!");
         }
     }
-
-    public void clearTempMana() { this.tempMana = 0; }
-    
-    @Override
-    public void takeTurn(Entity target) { /* Logic handled in CombatManager */ }
 }
