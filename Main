@@ -1,65 +1,87 @@
-import java.util.Random;
 import java.util.Scanner;
+import java.util.Random;
 
-public class GameManager {
+public class Main {
+    private static Scanner scanner = new Scanner(System.in);
+    private static Random random = new Random();
+    private static CombatManager combat = new CombatManager();
+    private static Player player;
+    private static int choiceCounter = 0;
+
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        Random rand = new Random();
-        Player player = new Player("Hero");
-        CombatManager cm = new CombatManager();
-        int choiceCounter = 0;
-
-        System.out.println("=== SUKADI BOI’S SYSTEM STARTING ===");
+        System.out.println("=== SUKADI BOI'S RPG ===");
+        System.out.print("Hero Name: ");
+        player = new Player(scanner.nextLine(), 100, 15, 12);
 
         while (player.getHp() > 0) {
             choiceCounter++;
             
-            // 1. Every 5th choice forces the Boss encounter
+            // 5th Round Boss Trigger
             if (choiceCounter == 5) {
-                System.out.println("\n!!! BOSS TRIGGERED: INFERNAL WITCH !!!");
-                if (!cm.fight(player, new BossEnemy())) break;
-                choiceCounter = 0; // Reset after boss
-            } 
-            else {
-                // 2. Selection: Player picks 1 of 3 randomized paths
-                System.out.println("\n--- Round " + choiceCounter + " / 4 ---");
-                System.out.println("Choose Path: 1. Combat | 2. Item Search | 3. Shop");
-                int choice = sc.nextInt();
-
-                switch (choice) {
-                    case 1 -> {
-                        // Random Enemy from Coworker's classes
-                        Enemy[] pool = { new Goblin(), new Skeleton(), new Troll() };
-                        if (!cm.fight(player, pool[rand.nextInt(pool.length)])) break;
-                    }
-                    case 2 -> {
-                        System.out.println("You found a stray item in the ruins!");
-                        player.inventory.add(new Item("Ancient Relic"));
-                    }
-                    case 3 -> {
-                        System.out.println("Shop (Gold: " + player.gold + "): 1. Buy Potion (20g) 2. Leave");
-                        if (sc.nextInt() == 1 && player.gold >= 20) {
-                            player.gold -= 20;
-                            player.inventory.add(new Item("Health Potion"));
-                            System.out.println("Purchased!");
-                        }
-                    }
-                }
+                System.out.println("\n!!! THE BOSS APPROACHES !!!");
+                combat.startCombat(player, new BossEnemy());
+                choiceCounter = 0; // Reset
+            } else {
+                handleSelection();
             }
 
-            // 3. Camp Phase: Post-event recovery
             if (player.getHp() > 0) {
-                System.out.println("\n--- CAMP PHASE ---");
-                System.out.println("1. Heal Up (+30 HP) | 2. Prepare (+20 Temp Mana)");
-                if (sc.nextInt() == 1) {
-                    player.setHp(player.getHp() + 30);
-                    System.out.println("HP Restored.");
-                } else {
-                    player.tempMana = 20;
-                    System.out.println("Temporary Mana Prepared.");
-                }
+                handleCamp();
             }
         }
-        System.out.println("\n[ SYSTEM ] Player HP reached 0. Game Over.");
+        System.out.println("\nGAME OVER. " + player.getName() + " has fallen.");
+    }
+
+    private static void handleSelection() {
+        System.out.println("\n[Round " + choiceCounter + "] Pick a path:");
+        String[] paths = {"Combat", "Item", "Shop"};
+        // Displaying 3 random choices (simplified to picking one of the types)
+        System.out.println("1. " + paths[0] + " | 2. " + paths[1] + " | 3. " + paths[2]);
+        
+        String choice = scanner.nextLine();
+        switch (choice) {
+            case "2": // Item Path
+                String pType = random.nextBoolean() ? "Heal Potion" : "Mana Potion";
+                System.out.println("Found a " + pType + "!");
+                player.addItem(new Item(pType));
+                break;
+            case "3": // Shop Path
+                handleShop();
+                break;
+            default: // Combat Path
+                combat.startCombat(player, getRandomEnemy());
+                break;
+        }
+    }
+
+    private static void handleShop() {
+        System.out.println("\nSHOP (Gold: " + player.getGold() + ")");
+        System.out.println("1. Heal Potion (20g) | 2. Mana Potion (20g) | 3. Leave");
+        String choice = scanner.nextLine();
+        if (choice.equals("1") && player.getGold() >= 20) {
+            player.addItem(new Item("Heal Potion"));
+            player.addGold(-20);
+        } else if (choice.equals("2") && player.getGold() >= 20) {
+            player.addItem(new Item("Mana Potion"));
+            player.addGold(-20);
+        }
+    }
+
+    private static void handleCamp() {
+        System.out.println("\n--- CAMP PHASE ---");
+        System.out.println("1. Heal Up (+30 HP) | 2. Prepare (+20 Temp Mana)");
+        String choice = scanner.nextLine();
+        if (choice.equals("1")) {
+            player.setHp(player.getHp() + 30);
+        } else {
+            player.setTempMana(20);
+        }
+    }
+
+    private static Enemy getRandomEnemy() {
+        int r = random.nextInt(3);
+        if (r == 0) return new Goblin();
+        if (r == 1) return new Skeleton();
+        return new Troll();
     }
 }
