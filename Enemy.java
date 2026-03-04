@@ -6,7 +6,8 @@ public class Enemy extends Entity {
         this.lootValue = gold;
     }
 
-    @Override
+    /*@Override*/
+    
     public void takeTurn(Entity target) {
         System.out.println("\n--- " + this.getName().toUpperCase() + "'S TURN ---");
 
