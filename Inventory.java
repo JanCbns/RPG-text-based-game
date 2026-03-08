@@ -2,19 +2,19 @@ import java.util.Scanner;
 
 public class Inventory {
 
-    public static void main(String[] args) {
+    static Weapon[] weapons = {
+        new Weapon("Sword"),
+        new Weapon("Bow"),
+        new Weapon("Knife")
+    };
+
+    static Item[] items = {
+        new Item("Heal Potion"),
+        new Item("Mana Potion")
+    };
+
+    public static void open() {
         Scanner scanner = new Scanner(System.in);
-
-        Weapon[] weapons = {
-            new Weapon("Sword"),
-            new Weapon("Bow"),
-            new Weapon("Knife")
-        };
-
-        Item[] items = {
-            new Item("Heal Potion"),
-            new Item("Mana Potion")
-        };
 
         System.out.println("=== INVENTORY ===");
         System.out.println("1. Weapons");
