@@ -1,48 +1,37 @@
-import java.util.ArrayList;
-
 public class Player extends Entity {
-    private int mana, tempMana, gold;
-    private ArrayList<Item> inventory = new ArrayList<>();
+    private int mana;
+    private int tempMana;
+    private int gold;
 
-    public Player(String name, int hp, int attack, int speed) {
-        super(name, hp, hp, attack, speed);
+    public Player(String name) {
+        super(name, 100, 100, 20, 12);
         this.mana = 50;
+        this.tempMana = 0;
         this.gold = 50;
     }
 
-    public int getMana() { return mana; }
-    public int getTempMana() { return tempMana; }
-    public int getGold() { return gold; }
-    public void addGold(int amount) { this.gold += amount; }
-    public void setTempMana(int amount) { this.tempMana = amount; }
-    public void clearTempMana() { this.tempMana = 0; }
-    public void addItem(Item item) { inventory.add(item); }
-
-    public boolean useMana(int cost) {
-        if ((mana + tempMana) >= cost) {
-            if (tempMana >= cost) tempMana -= cost;
-            else {
-                int remainder = cost - tempMana;
-                tempMana = 0;
-                mana -= remainder;
-            }
-            return true;
-        }
-        return false;
+    public int getTotalMana() {
+        return mana + tempMana;
     }
 
-    public void useItem() {
-        if (inventory.isEmpty()) {
-            System.out.println("Inventory is empty!");
-            return;
-        }
-        Item item = inventory.remove(0);
-        if (item.name.equals("Heal Potion")) {
-            setHp(getHp() + 40);
-            System.out.println("Used Heal Potion (+40 HP)!");
+    public void useMana(int amount) {
+        if (tempMana >= amount) {
+            tempMana -= amount;
         } else {
-            this.mana += 30;
-            System.out.println("Used Mana Potion (+30 Mana)!");
+            int remaining = amount - tempMana;
+            tempMana = 0;
+            mana -= remaining;
         }
     }
+
+    public void flushTempMana() {
+        this.tempMana = 0;
+    }
+
+    public void addTempMana(int amount) {
+        this.tempMana += amount;
+    }
+
+    public void addGold(int amount) { this.gold += amount; }
+    public int getGold() { return gold; }
 }
