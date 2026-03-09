@@ -38,7 +38,7 @@ public class GameManager {
         switch (choice) {
             case 1 -> startCombat(generateRandomEnemy());
             case 2 -> openShop();
-            case 3 -> Inventory.open();
+            case 3 -> Inventory.open(player);
             default -> System.out.println("You wander aimlessly...");
         }
     }
@@ -85,7 +85,7 @@ public class GameManager {
         } else if (action == 2) {
             useSkill(enemy);
         } else {
-            Inventory.open();
+            Inventory.open(player);
         }
     }
 
