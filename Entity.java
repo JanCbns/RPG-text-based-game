@@ -28,6 +28,10 @@ public abstract class Entity {
 
     }
 
+    void setAttack(int attack){
+        this.attack = attack;
+    }
+
     public void setHp(int hp) {
         this.hp = hp;
         if (this.hp > maxHp) this.hp = maxHp;
@@ -37,4 +41,5 @@ public abstract class Entity {
         this.hp -= amount;
         if (this.hp <= 0) this.hp = 0;
     }
+
 }
