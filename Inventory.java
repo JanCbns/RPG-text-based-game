@@ -6,6 +6,8 @@ public class Inventory {
         new Weapon("Sword"),
         new Weapon("Bow"),
         new Weapon("Knife")
+        new Weapon("Axe"),        
+        new Weapon("Magic Staff")
     };
 
     static Item[] items = {
