@@ -3,11 +3,11 @@ import java.util.*;
 public class Inventory {
 
     static Weapon[] weapons = {
-        new Weapon("Sword"),
-        new Weapon("Bow"),
-        new Weapon("Knife"),
-        new Weapon("Axe"),        
-        new Weapon("Magic Staff")
+        new Weapon("Sword", 15, 0),
+        new Weapon("Bow", 10, 0),
+        new Weapon("Knife", 5, 0),
+        new Weapon("Axe", 20, 0),
+        new Weapon("Magic Staff", 12, 20)
     };
 
     static Item[] items = {
@@ -26,42 +26,32 @@ public class Inventory {
         int choice = scanner.nextInt();
 
         if (choice == 1) {
+
             System.out.println("\n--- WEAPONS ---");
+
             for (int i = 0; i < weapons.length; i++) {
                 System.out.println((i + 1) + ". " + weapons[i].name);
             }
 
             System.out.print("Pick a weapon: ");
             int pick = scanner.nextInt();
-            if (pick == 1) {   // sa sword ni siya
-                player.setAttack(player.getAttack() + 15);
-                System.out.println("You picked sword");
-            }
 
-            else if (pick == 2) {   // sa bow ni
-                player.setAttack(player.getAttack() + 10);
-                System.out.println("You picked Bow");
-            }
+            if (pick >= 1 && pick <= weapons.length) {
+                Weapon selected = weapons[pick - 1];
 
-            else if (pick == 3) {   // knife/kutsilyo
-                player.setAttack(player.getAttack() + 5);
-                System.out.println("You picked Knife");
-            }
+                player.setAttack(player.getAttack() + selected.attackBonus);
+                player.addTempMana(selected.manaBonus);
 
-            else if (pick == 4) { // i added axe
-                player.setAttack(player.getAttack() + 20);
-                System.out.println("You picked Axe");
-            }
-                
-            else if (pick == 5) { // also magic staff
-                player.setAttack(player.getAttack() + 12);
-                player.addTempMana(20);
-                System.out.println("You picked Magic Staff with + Mana");
+                System.out.println("You picked " + selected.name + "!");
+            } else {
+                System.out.println("Invalid choice!");
             }
         }
 
         else if (choice == 2) {
+
             System.out.println("\n--- ITEMS ---");
+
             for (int i = 0; i < items.length; i++) {
                 System.out.println((i + 1) + ". " + items[i].name);
             }
@@ -69,16 +59,21 @@ public class Inventory {
             System.out.print("Pick an item: ");
             int pick = scanner.nextInt();
 
-            if (pick == 1) {   // heal potion
+            if (pick == 1) {
                 player.setHp(player.getHp() + 50);
                 System.out.println("You used Heal Potion! +50 HP");
             }
-
-            else if (pick == 2) {   // mana potion
+            else if (pick == 2) {
                 player.addTempMana(40);
                 System.out.println("You used Mana Potion! +40 Mana");
             }
+            else {
+                System.out.println("Invalid choice!");
+            }
+        }
+
+        else {
+            System.out.println("Invalid category!");
         }
     }
 }
- 
