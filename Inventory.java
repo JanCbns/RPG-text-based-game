@@ -5,7 +5,7 @@ public class Inventory {
     static Weapon[] weapons = {
         new Weapon("Sword"),
         new Weapon("Bow"),
-        new Weapon("Knife")
+        new Weapon("Knife"),
         new Weapon("Axe"),        
         new Weapon("Magic Staff")
     };
@@ -46,6 +46,17 @@ public class Inventory {
             else if (pick == 3) {   // knife/kutsilyo
                 player.setAttack(player.getAttack() + 5);
                 System.out.println("You picked Knife");
+            }
+
+            else if (pick == 4) { // i added axe
+                player.setAttack(player.getAttack() + 20);
+                System.out.println("You picked Axe");
+            }
+                
+            else if (pick == 5) { // also magic staff
+                player.setAttack(player.getAttack() + 12);
+                player.addTempMana(20);
+                System.out.println("You picked Magic Staff with + Mana");
             }
         }
 
